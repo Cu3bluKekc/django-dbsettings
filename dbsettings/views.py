@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -47,7 +51,8 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                     else:
                         location = setting.module_name
                     update_msg = (_(u'Updated %(desc)s on %(location)s') %
-                                  {'desc': unicode(setting.description), 'location': location})
+                                  {'desc': unicode(setting.description),
+                                   'location': location})
                     messages.add_message(request, messages.INFO, update_msg)
 
             return HttpResponseRedirect(request.path)
@@ -63,5 +68,6 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
 
 # Site-wide setting editor is identical, but without an app_label
 def site_settings(request):
-    return app_settings(request, app_label=None, template='dbsettings/site_settings.html')
+    return app_settings(request, app_label=None,
+                        template='dbsettings/site_settings.html')
 # staff_member_required is implied, since it calls app_settings

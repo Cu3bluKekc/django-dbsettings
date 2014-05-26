@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 from django.db.models.signals import post_syncdb
 
 
@@ -10,15 +14,17 @@ def mk_permissions(permissions, appname, verbosity):
     from django.contrib.auth.models import Permission
     from django.contrib.contenttypes.models import ContentType
     # create a content type for the app
-    ct, created = ContentType.objects.get_or_create(model='', app_label=appname,
+    ct, created = ContentType.objects.get_or_create(model='',
+                                                    app_label=appname,
                                                     defaults={'name': appname})
     if created and verbosity >= 2:
         print "Adding custom content type '%s'" % ct
     # create permissions
     for codename, name in permissions:
+        defaults = {'name': name, 'content_type': ct}
         p, created = Permission.objects.get_or_create(codename=codename,
                                                       content_type__pk=ct.id,
-                                                      defaults={'name': name, 'content_type': ct})
+                                                      defaults=defaults)
         if created and verbosity >= 2:
             print "Adding custom permission '%s'" % p
 
@@ -26,7 +32,8 @@ def mk_permissions(permissions, appname, verbosity):
 def handler(sender, **kwargs):
     from dbsettings.loading import get_app_settings
     app_label = sender.__name__.split('.')[-2]
-    are_global_settings = any(not s.class_name for s in get_app_settings(app_label))
+    are_global_settings = any(not s.class_name
+                              for s in get_app_settings(app_label))
     if are_global_settings:
         permission = (
             'can_edit__settings',

@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 import datetime
 from decimal import Decimal
 from hashlib import md5
@@ -24,7 +28,8 @@ class Value(object):
     creation_counter = 0
     unitialized_value = None
 
-    def __init__(self, description=None, help_text=None, choices=None, required=True, default=None):
+    def __init__(self, description=None, help_text=None, choices=None,
+                 required=True, default=None):
         self.description = description
         self.help_text = help_text
         self.choices = choices or []
@@ -125,7 +130,8 @@ class DurationValue(Value):
             try:
                 return datetime.timedelta(seconds=float(value))
             except (ValueError, TypeError):
-                raise forms.ValidationError('This value must be a real number.')
+                raise forms.ValidationError('This value must be \
+                                            a real number.')
             except OverflowError:
                 raise forms.ValidationError('The maximum allowed value is %s' %
                                             datetime.timedelta.max)
@@ -138,10 +144,12 @@ class DurationValue(Value):
         except (ValueError, TypeError):
             raise forms.ValidationError('This value must be a real number.')
         except OverflowError:
-            raise forms.ValidationError('The maximum allowed value is %s' % datetime.timedelta.max)
+            raise forms.ValidationError('The maximum allowed value is %s' %
+                                        datetime.timedelta.max)
 
     def get_db_prep_save(self, value):
-        return unicode(value.days * 24 * 3600 + value.seconds + float(value.microseconds) / 1000000)
+        return unicode(value.days * 24 * 3600 + value.seconds +
+                       float(value.microseconds) / 1000000)
 
 
 class FloatValue(Value):
@@ -170,7 +178,8 @@ class PercentValue(Value):
                 # Place a percent sign after a smaller text field
                 attrs = kwargs.pop('attrs', {})
                 attrs['size'] = attrs['max_length'] = 6
-                return forms.TextInput.render(self, attrs=attrs, *args, **kwargs) + '%'
+                return forms.TextInput.render(self, attrs=attrs,
+                                              *args, **kwargs) + '%'
 
     def to_python(self, value):
         return Decimal(value) / 100
@@ -214,8 +223,8 @@ class MultiSeparatorValue(TextValue):
         separator string (default is semi-colon as above).
     """
 
-    def __init__(self, description=None, help_text=None, separator=';', required=True,
-                 default=None):
+    def __init__(self, description=None, help_text=None, separator=';',
+                 required=True, default=None):
         self.separator = separator
         if default is not None:
             # convert from list to string
@@ -259,9 +268,11 @@ class ImageValue(Value):
 
                     from PIL import Image
                     Image.open(value.file)
-                    file_name = pjoin(settings.MEDIA_URL, value.name).replace("\\", "/")
+                    file_name = pjoin(settings.MEDIA_URL, value.name).\
+                        replace("\\", "/")
                     params = {"file_name": file_name}
-                    output.append(u'<p><img src="%(file_name)s" width="100" /></p>' % params)
+                    output.append(u'<p><img src="%(file_name)s" \
+                                    width="100" /></p>' % params)
                 except IOError:
                     pass
 

@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 import sys
 
 from dbsettings.values import Value
@@ -42,7 +46,8 @@ class Group(object):
         else:
             module_name = sys._getframe(1).f_globals['__name__']
 
-        attrs = [(k, v) for (k, v) in cls.__dict__.items() if isinstance(v, Value)]
+        attrs = [(k, v) for (k, v) in cls.__dict__.items()
+                 if isinstance(v, Value)]
         if copy:
             attrs = [(k, v.copy()) for (k, v) in attrs]
         attrs.sort(lambda a, b: cmp(a[1], b[1]))
@@ -83,7 +88,8 @@ class Group(object):
                 cls._meta.permissions.append(permission)
             except AttributeError:
                 # Permissions were supplied as a tuple, so preserve that
-                cls._meta.permissions = tuple(cls._meta.permissions + (permission,))
+                cls._meta.permissions = tuple(cls._meta.permissions +
+                                              (permission,))
 
         # Finally, place the attribute on the class
         setattr(cls, name, GroupDescriptor(self, name))
@@ -94,7 +100,8 @@ class Group(object):
 
     def __add__(self, other):
         if not isinstance(other, Group):
-            raise NotImplementedError('Groups may only be added to other groups.')
+            raise NotImplementedError('Groups may only be added \
+                                      to other groups.')
 
         attrs = dict(self._settings + other._settings)
         attrs['__module__'] = sys._getframe(1).f_globals['__name__']

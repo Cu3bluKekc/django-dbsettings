@@ -1,6 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('dbsettings.views',
+urlpatterns = patterns(
+    'dbsettings.views',
     url(r'^$', 'site_settings', name='site_settings'),
     url(r'^(?P<app_label>[^/]+)/$', 'app_settings', name='app_settings'),
 )
